@@ -14,12 +14,13 @@ import java.time.LocalDateTime;
 public class Project {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    Long id;
+    private Long id;
     @NotNull
-    String name;
-    String description;
-    @OneToOne(targetEntity = User.class)
-    Long owner_id;
+    private String name;
+    private String description;
+    @OneToOne
+    @JoinColumn(name = "owner_id", nullable = false)
+    private User user;
     @CreationTimestamp
-    LocalDateTime created_at;
+    private LocalDateTime created_at;
 }

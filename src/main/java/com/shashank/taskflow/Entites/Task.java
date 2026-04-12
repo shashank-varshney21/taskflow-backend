@@ -18,22 +18,23 @@ import java.time.LocalDateTime;
 public class Task {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    Long id;
+    private Long id;
     @NotNull
-    String title;
-    String description;
+    private String title;
+    private String description;
     @Enumerated(EnumType.STRING)
-    StatusEnum status;
+    private StatusEnum status;
     @Enumerated(EnumType.STRING)
-    PriorityEnum priority;
-    @OneToOne(targetEntity = Project.class)
-    @NotNull
-    Long project_id;
-    @OneToOne(targetEntity = User.class)
-    Long assignee_id;
-    LocalDate due_date;
+    private PriorityEnum priority;
+    @ManyToOne
+    @JoinColumn(name = "project_id", nullable = false)
+    private Project project;
+    @ManyToOne
+    @JoinColumn(name = "assignee_id", nullable = true)
+    private User user;
+    private LocalDate due_date;
     @CreationTimestamp
-    LocalDateTime createdAt;
+    private LocalDateTime createdAt;
     @UpdateTimestamp
-    LocalDateTime updated_at;
+    private LocalDateTime updated_at;
 }

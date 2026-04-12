@@ -16,14 +16,14 @@ import java.time.LocalDateTime;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    Long id;
+    private Long id;
     @NotNull
-    String name;
+    private String name;
     @Email(message = "Type a valid email.")
     @Column(unique = true)
-    String email;
+    private String email;
     @NotNull
-    String password;
+    private String password;
     @CreationTimestamp
-    LocalDateTime created_at;
+    private LocalDateTime created_at;
 }
