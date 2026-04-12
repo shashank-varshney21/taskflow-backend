@@ -3,10 +3,7 @@ package com.shashank.taskflow.Entites;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -21,6 +18,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "app-user")
+@Builder
 public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -34,7 +32,6 @@ public class User implements UserDetails {
     private String password;
     @CreationTimestamp
     private LocalDateTime created_at;
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of();
