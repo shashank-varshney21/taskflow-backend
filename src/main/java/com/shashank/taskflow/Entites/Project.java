@@ -22,7 +22,7 @@ public class Project {
     @NotNull
     private String name;
     private String description;
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "owner_id", nullable = false)
     private User user;
     @CreationTimestamp
