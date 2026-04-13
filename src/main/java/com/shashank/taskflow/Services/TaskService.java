@@ -13,6 +13,7 @@ import com.shashank.taskflow.Repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -98,6 +99,14 @@ public class TaskService {
 
     public ResponseEntity<String> patchTask(String id, TaskUpdateRequestDto taskUpdateRequestDto) {
         Task task = taskRepository.findById(id).orElseThrow();
+        String projectOwnerId = task.getProject().getUser().getId();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.isAuthenticated()) {
+            User user = (User) authentication.getPrincipal(); // your entity
+            if(!user.getId().equals(projectOwnerId)) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized");
+            }
+        }
         if(taskUpdateRequestDto.getTitle() != null) {
             task.setTitle(taskUpdateRequestDto.getTitle());
         }
@@ -124,6 +133,14 @@ public class TaskService {
 
     public ResponseEntity<String> delete(String id) {
         Task task = taskRepository.findById(id).orElseThrow();
+        String projectOwnerId = task.getProject().getUser().getId();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.isAuthenticated()) {
+            User user = (User) authentication.getPrincipal(); // your entity
+            if(!user.getId().equals(projectOwnerId)) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized");
+            }
+        }
         taskRepository.delete(task);
         return ResponseEntity.ok("SUCCESS");
     }

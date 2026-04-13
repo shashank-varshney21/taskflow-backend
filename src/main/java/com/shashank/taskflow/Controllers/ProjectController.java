@@ -1,6 +1,7 @@
 package com.shashank.taskflow.Controllers;
 
 import com.shashank.taskflow.Dtos.ProjectDetailsResponseDto;
+import com.shashank.taskflow.Dtos.ProjectPatchDto;
 import com.shashank.taskflow.Dtos.ProjectRequestDto;
 import com.shashank.taskflow.Dtos.ProjectResponseDto;
 import com.shashank.taskflow.Services.ProjectService;
@@ -22,8 +23,23 @@ public class ProjectController {
         return projectService.getProjects();
     }
 
+    @GetMapping("/{id}")
+        public ResponseEntity<ProjectDetailsResponseDto> getProjectDetails(@PathVariable String id) {
+            return projectService.getProjectDetails(id);
+    }
+
     @PostMapping
     public ResponseEntity<ProjectResponseDto> createProject(@RequestBody ProjectRequestDto projectRequestDto) {
         return projectService.createProject(projectRequestDto);
+    }
+
+    @PatchMapping("/{id}")
+        public ResponseEntity<String> patchProject(@PathVariable String id, @RequestBody ProjectPatchDto projectPatchDto) {
+            return projectService.patchProject(id, projectPatchDto);
+    }
+
+    @DeleteMapping("/{id}")
+        public ResponseEntity<String> deleteProject(@PathVariable String id) {
+            return projectService.deleteProject(id);
     }
 }
