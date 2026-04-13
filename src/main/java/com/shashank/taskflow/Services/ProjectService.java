@@ -107,14 +107,14 @@ public class ProjectService {
             return ResponseEntity.ok(new ProjectResponseDto(project.getId()));
     }
 
-    public ResponseEntity<String> patchProject(String id, ProjectPatchDto projectPatchDto) {
+    public ResponseEntity<StandardResponseDto> patchProject(String id, ProjectPatchDto projectPatchDto) {
         Project project = projectRepository.findById(id).orElseThrow();
         User projectOwner = project.getUser();
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.isAuthenticated()) {
             User user = (User) authentication.getPrincipal(); // your entity
             if(!user.getId().equals(projectOwner.getId())) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized");
+                return new ResponseEntity<>(new StandardResponseDto("Unauthorised"), HttpStatus.UNAUTHORIZED);
             }
         }
         if(projectPatchDto.getName() != null) {
@@ -125,20 +125,20 @@ public class ProjectService {
         }
 
         projectRepository.save(project);
-        return ResponseEntity.ok("SUCCESS");
+        return new ResponseEntity<>(new StandardResponseDto("SUCCESS"), HttpStatus.OK);
     }
 
-    public ResponseEntity<String> deleteProject(String id) {
+    public ResponseEntity<StandardResponseDto> deleteProject(String id) {
         Project project = projectRepository.findById(id).orElseThrow();
         User projectOwner = project.getUser();
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.isAuthenticated()) {
             User user = (User) authentication.getPrincipal(); // your entity
             if(!user.getId().equals(projectOwner.getId())) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized");
+                return new ResponseEntity<>(new StandardResponseDto("Unauthorised"), HttpStatus.UNAUTHORIZED);
             }
         }
         projectRepository.delete(project);
-        return ResponseEntity.ok("SUCCESS");
+        return new ResponseEntity<>(new StandardResponseDto("SUCCESS"), HttpStatus.OK);
     }
 }

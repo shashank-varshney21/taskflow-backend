@@ -1,5 +1,6 @@
 package com.shashank.taskflow.Services;
 
+import com.shashank.taskflow.Dtos.StandardResponseDto;
 import com.shashank.taskflow.Dtos.TaskRequestDto;
 import com.shashank.taskflow.Dtos.TaskResponseDto;
 import com.shashank.taskflow.Dtos.TaskUpdateRequestDto;
@@ -68,7 +69,7 @@ public class TaskService {
         }
     }
 
-    public ResponseEntity<String> assignTask(String taskId, String userId) {
+    public ResponseEntity<StandardResponseDto> assignTask(String taskId, String userId) {
         Task task = taskRepository.findById(taskId).orElseThrow();
         User user = userRepository.findById(userId).orElseThrow();
 
@@ -76,7 +77,7 @@ public class TaskService {
 
         taskRepository.save(task);
 
-        return ResponseEntity.ok("SUCCESS");
+        return new ResponseEntity<>(new StandardResponseDto("SUCCESS"), HttpStatus.OK);
     }
 
     public ResponseEntity<TaskResponseDto> createTask(String id, TaskRequestDto taskRequestDto) {
@@ -97,14 +98,14 @@ public class TaskService {
         return ResponseEntity.ok(modelMapper.map(task, TaskResponseDto.class));
     }
 
-    public ResponseEntity<String> patchTask(String id, TaskUpdateRequestDto taskUpdateRequestDto) {
+    public ResponseEntity<StandardResponseDto> patchTask(String id, TaskUpdateRequestDto taskUpdateRequestDto) {
         Task task = taskRepository.findById(id).orElseThrow();
         String projectOwnerId = task.getProject().getUser().getId();
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.isAuthenticated()) {
             User user = (User) authentication.getPrincipal(); // your entity
             if(!user.getId().equals(projectOwnerId)) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized");
+                return new ResponseEntity<>(new StandardResponseDto("Unauthorized"), HttpStatus.UNAUTHORIZED);
             }
         }
         if(taskUpdateRequestDto.getTitle() != null) {
@@ -128,21 +129,21 @@ public class TaskService {
         }
 
         taskRepository.save(task);
-        return ResponseEntity.ok("SUCCESS");
+        return new ResponseEntity<>(new StandardResponseDto("SUCCESS"), HttpStatus.OK);
     }
 
-    public ResponseEntity<String> delete(String id) {
+    public ResponseEntity<StandardResponseDto> delete(String id) {
         Task task = taskRepository.findById(id).orElseThrow();
         String projectOwnerId = task.getProject().getUser().getId();
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.isAuthenticated()) {
             User user = (User) authentication.getPrincipal(); // your entity
             if(!user.getId().equals(projectOwnerId)) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized");
+                return new ResponseEntity<>(new StandardResponseDto("Unauthorized"), HttpStatus.UNAUTHORIZED);
             }
         }
         taskRepository.delete(task);
-        return ResponseEntity.ok("SUCCESS");
+        return new ResponseEntity<>(new StandardResponseDto("SUCCESS"), HttpStatus.OK);
     }
 
 }

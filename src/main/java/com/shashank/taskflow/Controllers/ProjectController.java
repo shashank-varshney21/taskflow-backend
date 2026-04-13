@@ -1,9 +1,6 @@
 package com.shashank.taskflow.Controllers;
 
-import com.shashank.taskflow.Dtos.ProjectDetailsResponseDto;
-import com.shashank.taskflow.Dtos.ProjectPatchDto;
-import com.shashank.taskflow.Dtos.ProjectRequestDto;
-import com.shashank.taskflow.Dtos.ProjectResponseDto;
+import com.shashank.taskflow.Dtos.*;
 import com.shashank.taskflow.Services.ProjectService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -34,12 +31,12 @@ public class ProjectController {
     }
 
     @PatchMapping("/{id}")
-        public ResponseEntity<String> patchProject(@PathVariable String id, @RequestBody ProjectPatchDto projectPatchDto) {
+        public ResponseEntity<StandardResponseDto> patchProject(@PathVariable String id, @RequestBody ProjectPatchDto projectPatchDto) {
             return projectService.patchProject(id, projectPatchDto);
     }
 
     @DeleteMapping("/{id}")
-        public ResponseEntity<String> deleteProject(@PathVariable String id) {
+        public ResponseEntity<StandardResponseDto> deleteProject(@PathVariable String id) {
             return projectService.deleteProject(id);
     }
 }

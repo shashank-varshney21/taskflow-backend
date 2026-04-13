@@ -1,5 +1,6 @@
 package com.shashank.taskflow.Controllers;
 
+import com.shashank.taskflow.Dtos.StandardResponseDto;
 import com.shashank.taskflow.Dtos.TaskRequestDto;
 import com.shashank.taskflow.Dtos.TaskResponseDto;
 import com.shashank.taskflow.Dtos.TaskUpdateRequestDto;
@@ -23,7 +24,7 @@ public class TaskController {
     }
 
     @GetMapping("/task/{taskId}/assign/{userId}")
-        public ResponseEntity<String> assignTask(@PathVariable String taskId, @PathVariable String userId) {
+        public ResponseEntity<StandardResponseDto> assignTask(@PathVariable String taskId, @PathVariable String userId) {
             return taskService.assignTask(taskId,userId);
     }
 
@@ -33,12 +34,12 @@ public class TaskController {
     }
 
     @PatchMapping("/tasks/{id}")
-        public ResponseEntity<String> patchTask(@PathVariable String id, @RequestBody TaskUpdateRequestDto taskUpdateRequestDto) {
+        public ResponseEntity<StandardResponseDto> patchTask(@PathVariable String id, @RequestBody TaskUpdateRequestDto taskUpdateRequestDto) {
             return taskService.patchTask(id, taskUpdateRequestDto);
     }
 
     @DeleteMapping("/tasks/{id}")
-        public ResponseEntity<String> delete(@PathVariable String id) {
+        public ResponseEntity<StandardResponseDto> delete(@PathVariable String id) {
             return taskService.delete(id);
     }
 
