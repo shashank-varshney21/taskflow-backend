@@ -25,22 +25,27 @@ public class JwtAuthMiddleware extends OncePerRequestFilter { //Request will go 
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        final String requestTokenHeader = request.getHeader("Authorization");
+        try{
+            final String requestTokenHeader = request.getHeader("Authorization");
 
-        if(requestTokenHeader == null || !requestTokenHeader.startsWith("Bearer")) {
+            if(requestTokenHeader == null || !requestTokenHeader.startsWith("Bearer ")) {
+                log.info("Token not found");
+                filterChain.doFilter(request, response);
+                return;
+            }
+
+            String token = requestTokenHeader.split("Bearer ")[1];
+
+            String id = jwtAuthUtil.getIdfromToken(token);
+
+            if(id != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                User user = userRepository.findById(id).orElseThrow();
+                UsernamePasswordAuthenticationToken token1 = new UsernamePasswordAuthenticationToken(user,null, user.getAuthorities());
+                SecurityContextHolder.getContext().setAuthentication(token1);
+            }
             filterChain.doFilter(request, response);
-            return;
+        } catch (Exception ex) {
+            log.error("JWT ERROR: {}", ex.getMessage());
         }
-
-        String token = requestTokenHeader.split("Bearer ")[1];
-
-        String id = jwtAuthUtil.getIdfromToken(token);
-
-        if(id != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            User user = userRepository.findById(id).orElseThrow();
-            UsernamePasswordAuthenticationToken token1 = new UsernamePasswordAuthenticationToken(user,user.getAuthorities());
-            SecurityContextHolder.getContext().setAuthentication(token1);
-        }
-        filterChain.doFilter(request, response);
     }
 }
