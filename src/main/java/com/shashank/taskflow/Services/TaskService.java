@@ -36,14 +36,12 @@ public class TaskService {
         if (status!=null && assignee!=null) {
             User assignedUser = userRepository.findById(assignee).orElseThrow();
             List<Task> taskList = taskRepository.findAllByProjectAndStatusAndUser(project, status, assignedUser);
-            log.info("taskList: {}", taskList);
             return ResponseEntity.ok(taskList.stream().map(task -> {
                 return modelMapper.map(task, TaskResponseDto.class);
             }).toList());
         }
         else if (status != null) {
             List<Task> taskList = taskRepository.findAllByProjectAndStatus(project, status);
-            log.info("taskList: {}", taskList);
             return ResponseEntity.ok(taskList.stream().map(task -> {
                 return modelMapper.map(task, TaskResponseDto.class);
             }).toList());
@@ -51,14 +49,12 @@ public class TaskService {
         else if (assignee!=null) {
             User assignedUser = userRepository.findById(assignee).orElseThrow();
             List<Task> taskList = taskRepository.findAllByProjectAndUser(project, assignedUser);
-            log.info("taskList: {}", taskList);
             return ResponseEntity.ok(taskList.stream().map(task -> {
                 return modelMapper.map(task, TaskResponseDto.class);
             }).toList());
         }
         else {
             List<Task> taskList = taskRepository.findAllByProject(project);
-            log.info("taskList: {}", taskList);
             List<TaskResponseDto> response = taskList.stream().map(task -> {
                 return modelMapper.map(task, TaskResponseDto.class);
             }).toList();
