@@ -80,7 +80,7 @@ public class TaskService {
     public ResponseEntity<TaskDetailDto> taskDetails(@PathVariable String id) {
         Task task = taskRepository.findById(id).orElseThrow();
         TaskDetailDto taskDetailDto = modelMapper.map(task, TaskDetailDto.class);
-        if(task.getUser().getId() != null) {
+        if(task.getUser() != null) {
             taskDetailDto.setAssignee_id(task.getUser().getId());
         }
         return ResponseEntity.ok(taskDetailDto);
@@ -110,7 +110,7 @@ public class TaskService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.isAuthenticated()) {
             User user = (User) authentication.getPrincipal(); // your entity
-            if(!user.getId().equals(projectOwnerId)) {
+            if(!projectOwnerId.equals(user.getId())) {
                 return new ResponseEntity<>(new StandardResponseDto("Unauthorized"), HttpStatus.UNAUTHORIZED);
             }
         }
@@ -130,7 +130,7 @@ public class TaskService {
             task.setDue_date(taskUpdateRequestDto.getDue_date());
         }
         if(taskUpdateRequestDto.getAssignee() != null) {
-            User assignedUser = userRepository.findById(taskUpdateRequestDto.getAssignee()).orElseThrow();
+            User assignedUser = userRepository.findByName(taskUpdateRequestDto.getAssignee()).orElseThrow();
             task.setUser(assignedUser);
         }
 

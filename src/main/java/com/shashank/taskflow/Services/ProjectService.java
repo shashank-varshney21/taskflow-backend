@@ -7,6 +7,7 @@ import com.shashank.taskflow.Entites.User;
 import com.shashank.taskflow.Repositories.ProjectRepository;
 import com.shashank.taskflow.Repositories.TaskRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +20,7 @@ import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ProjectService {
 
     private final ModelMapper modelMapper;
@@ -31,22 +33,30 @@ public class ProjectService {
         if (authentication != null && authentication.isAuthenticated()) {
             user = (User) authentication.getPrincipal(); // your entity
         }
-
         List<Project> list = projectRepository.findAllByUserId(Objects.requireNonNull(user).getId());
+        log.info("list: {}", list);
 
         //All projects the user has tasks in
 
-        List<Task> listOfTasks = taskRepository.findAllByUserId(user.getId());
+        List<Task> listOfTasks = taskRepository.findAllByUser_Id(user.getId());
+        log.info("listOfTasks: {}", listOfTasks);
 
         List<Project> list2 = listOfTasks.stream().map(Task::getProject).toList();
+        log.info("list2: {}", list2);
 
         List<Project> uniqueList2 = list2.stream().distinct().toList();
+        log.info("uniqueList2: {}", uniqueList2);
 
         //merging both lists
 
         list.addAll(uniqueList2);
+        log.info("list after add all: {}", list);
 
         List<Project> response = list.stream().distinct().toList();
+        log.info("response: {}", response);
+
+
+
 
         return ResponseEntity.ok(response.stream().map(project -> {
             return modelMapper.map(project, ProjectDetailsResponseDto.class);
@@ -137,6 +147,11 @@ public class ProjectService {
             if(!user.getId().equals(projectOwner.getId())) {
                 return new ResponseEntity<>(new StandardResponseDto("Unauthorised"), HttpStatus.UNAUTHORIZED);
             }
+        }
+        //Delete all the tasks of the project
+        List<Task> list = taskRepository.findAllByProject_Id(project.getId());
+        for(Task task : list) {
+            taskRepository.delete(task);
         }
         projectRepository.delete(project);
         return new ResponseEntity<>(new StandardResponseDto("SUCCESS"), HttpStatus.OK);

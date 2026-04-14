@@ -24,6 +24,7 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
     @NotNull
+    @Column(unique = true)
     private String name;
     @Email(message = "Type a valid email.")
     @Column(unique = true)
