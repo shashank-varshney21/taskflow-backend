@@ -1,9 +1,6 @@
 package com.shashank.taskflow.Controllers;
 
-import com.shashank.taskflow.Dtos.StandardResponseDto;
-import com.shashank.taskflow.Dtos.TaskRequestDto;
-import com.shashank.taskflow.Dtos.TaskResponseDto;
-import com.shashank.taskflow.Dtos.TaskUpdateRequestDto;
+import com.shashank.taskflow.Dtos.*;
 import com.shashank.taskflow.Enums.StatusEnum;
 import com.shashank.taskflow.Services.TaskService;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +23,11 @@ public class TaskController {
     @GetMapping("/task/{taskId}/assign/{userId}")
         public ResponseEntity<StandardResponseDto> assignTask(@PathVariable String taskId, @PathVariable String userId) {
             return taskService.assignTask(taskId,userId);
+    }
+
+    @GetMapping("/task/{id}")
+        public ResponseEntity<TaskDetailDto> taskDetails(@PathVariable String id) {
+            return taskService.taskDetails(id);
     }
 
     @PostMapping("/projects/{id}/tasks")

@@ -1,9 +1,6 @@
 package com.shashank.taskflow.Services;
 
-import com.shashank.taskflow.Dtos.StandardResponseDto;
-import com.shashank.taskflow.Dtos.TaskRequestDto;
-import com.shashank.taskflow.Dtos.TaskResponseDto;
-import com.shashank.taskflow.Dtos.TaskUpdateRequestDto;
+import com.shashank.taskflow.Dtos.*;
 import com.shashank.taskflow.Entites.Project;
 import com.shashank.taskflow.Entites.Task;
 import com.shashank.taskflow.Entites.User;
@@ -78,6 +75,15 @@ public class TaskService {
         taskRepository.save(task);
 
         return new ResponseEntity<>(new StandardResponseDto("SUCCESS"), HttpStatus.OK);
+    }
+
+    public ResponseEntity<TaskDetailDto> taskDetails(@PathVariable String id) {
+        Task task = taskRepository.findById(id).orElseThrow();
+        TaskDetailDto taskDetailDto = modelMapper.map(task, TaskDetailDto.class);
+        if(task.getUser().getId() != null) {
+            taskDetailDto.setAssignee_id(task.getUser().getId());
+        }
+        return ResponseEntity.ok(taskDetailDto);
     }
 
     public ResponseEntity<TaskResponseDto> createTask(String id, TaskRequestDto taskRequestDto) {
